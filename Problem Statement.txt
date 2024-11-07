@@ -1,0 +1,196 @@
+KPI's Requirements
+
+1. Total Revenue: The sum of the total price of all pizza orders.
+
+Select sum(total_price) As [Total Price] From pizza_sales
+
+817860.05083847
+
+2. Average Order Value: The average amount spent per order: calculated by dividing the total revenue by the total number of orders.
+
+Select sum(total_price)/count(Distinct(order_id)) [Average Order Value]
+From pizza_sales
+
+38.3072623343546
+
+3. Total Pizza Sold: The sum of the quantities of all pizzas sold.
+
+Select sum(quantity) [Sum of Quantity]
+From pizza_sales
+
+49574
+
+4. Total Orders: The total number of orders placed.
+
+Select Count(Distinct(order_id)) [All Orders]
+From pizza_sales
+
+21350
+
+5. Average Pizzas Per Order: The average number of pizzas sold per order, calculated by dividing the total number of pizzas sold by the number of orders.
+
+Select cast(cast(count(pizza_id) as decimal(10,2))/count(Distinct(Order_id)) as decimal(10,2))
+[Average Pizza Per order]
+From pizza_sales
+
+2.28
+
+CHARTS Requirements
+
+We would like to visualize various aspects of our pizza sales data to gain insights and understand key trends. We have identified the following requirements for creating charts:
+
+1. Daily Trend for Total Orders:
+
+Create a bar chart that display the daily trend of total orders over a specific time period. This chart will help us identify any patterns or fluctuations in order volumes on a daily basis.
+
+Select datename(DW,order_date) [Order Day],count(distinct(order_id)) [Order Count]
+From pizza_sales
+Group By datename(DW,order_date)
+
+Saturday	3158
+Wednesday	3024
+Monday		2794
+Sunday		2624
+Friday		3538
+Thursday	3239
+Tuesday		2973
+
+2. Monthly Trend for Total Orders:
+
+Create a line chart that illustrate the hourly trend of total orders throughout the day. This chart will allow us to identify peak hours or periods of high order activity.
+
+Select datename(MONTH,order_date) [Month Name],count(distinct(order_id)) [Order Count]
+From pizza_sales
+Group By datename(MONTH,order_date)
+Order By count(distinct(order_id)) Desc
+
+July		1935
+May		1853
+January		1845
+August		1841
+March		1840
+April		1799
+November	1792
+June		1773
+February	1685
+December	1680
+September	1661
+October		1646
+
+3. Percentage of Sales by Pizza Category:
+
+Create a pie chart that shows the distribution of sales cross different pizza categories. This chart will provide insights into the popularity of various pizza categories and their contribution to overall sales.
+
+Select pizza_category,sum(total_price) * 100 / (Select sum(total_price) From pizza_sales) [PCT]
+From pizza_sales
+Group by pizza_category
+
+Classic		26.9059602306976
+Chicken		23.9551375322885
+Veggie		23.6825910258677
+Supreme		25.4563112111462
+
+4. Percentage of Sales by Pizza Size:
+
+Generate a pie chart that represents the percentage of sales attributed to different pizza sizes. This chart will help us understand customer preferences for pizza sizes and their impact on sales.
+
+Select pizza_size,cast(sum(total_price) * 100 / (Select sum(total_price) From pizza_sales)
+as decimal(10,2)) [PCT]
+From pizza_sales
+Group by pizza_size
+
+L	45.89
+XXL	0.12
+M	30.49
+XL	1.72
+S	21.77
+
+5. Total Pizzas Sold by Pizza Category:
+
+Create a funnel chart that presents the total number of pizzas sold for each pizza category. This chart will allow us to compare the sales performance of different pizza categories.
+
+Select pizza_category,cast(sum(total_price) as decimal(10,2)) [Total_Price]
+From pizza_sales
+Group by [pizza_category]
+
+Classic		220053.10
+Chicken		195919.50
+Veggie		193690.45
+Supreme		208197.00
+
+6. Top 5 Best Sellers by Revenue, Total Quantity and Total Orders.
+
+Create a bar char highlighting the top 5 best - selling pizzas based on the Revenue, Total Quantity, Total Orders. This chart will help us identify the most popular pizza options.
+
+Select Top 5 pizza_name,sum(total_price)[Total Revenue]
+From pizza_sales
+Group by pizza_name
+Order By sum(total_price) Desc
+
+The Thai Chicken Pizza		43434.25
+The Barbecue Chicken Pizza	42768
+The California Chicken Pizza	41409.5
+The Classic Deluxe Pizza	38180.5
+The Spicy Italian Pizza		34831.25
+
+Select Top 5 pizza_name,cast(sum(quantity)as decimal(10,2)) [Total Quantity]
+From pizza_sales
+Group by pizza_name
+Order By sum(quantity) DESC
+
+The Classic Deluxe Pizza	2453.00
+The Barbecue Chicken Pizza	2432.00
+The Hawaiian Pizza		2422.00
+The Pepperoni Pizza		2418.00
+The Thai Chicken Pizza		2371.00
+
+Select Top 5 pizza_name,cast(count(distinct(order_id))as decimal(10,2)) [Total Orders]
+From pizza_sales
+Group by pizza_name
+Order By count(distinct(order_id)) Desc
+
+The Classic Deluxe Pizza	2329.00
+The Hawaiian Pizza		2280.00
+The Pepperoni Pizza		2278.00
+The Barbecue Chicken Pizza	2273.00
+The Thai Chicken Pizza		2225.00
+
+7. Bottom 5 Best Sellers by Revenue. Total Quantity and Total Orders.
+
+Create a bar chart showcasing the bottom 5 worst - selling pizzas based on the Revenue, Total Quantity, Total Orders. This chart will enable us to identify underperforming or less popular pizza options.
+
+Select Top 5 pizza_name,cast(sum(total_price)as decimal(10,2)) [Total Revenue]
+From pizza_sales
+Group by pizza_name
+Order By sum(total_price) ASC
+
+The Brie Carre Pizza		11588.50
+The Green Garden Pizza		13955.75
+The Spinach Supreme Pizza	15277.75
+The Mediterranean Pizza		15360.50
+The Spinach Pesto Pizza		15596.00
+
+Select Top 5 pizza_name,cast(sum(quantity)as decimal(10,2)) [Total Quantity]
+From pizza_sales
+Group by pizza_name
+Order By sum(quantity) ASC
+
+The Brie Carre Pizza		490.00
+The Mediterranean Pizza		934.00
+The Calabrese Pizza		937.00
+The Spinach Supreme Pizza	950.00
+The Soppressata Pizza		961.00
+
+Select Top 5 pizza_name,cast(count(distinct(order_id))as decimal(10,2)) [Total Orders]
+From pizza_sales
+Group by pizza_name
+Order By count(distinct(order_id)) ASC
+
+The Brie Carre Pizza		480.00
+The Mediterranean Pizza		912.00
+The Spinach Supreme Pizza	918.00
+The Calabrese Pizza		918.00
+The Chicken Pesto Pizza		938.00
+
+
+
